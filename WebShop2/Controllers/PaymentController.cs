@@ -19,7 +19,7 @@ namespace WebShop2.Controllers
         public PayexService PayexService { get; set; }
 
         public PaymentController()
-        {
+        { 
             OrderService = new OrderService();
             CartService = new CartService();
             PayexService = new PayexService();
@@ -38,7 +38,7 @@ namespace WebShop2.Controllers
         public ActionResult CreateOrder(int id, Cart customerCart)
         {
             var cart = CartService.GetCartById(id);
-
+            //comment
             cart.Customer = customerCart.Customer;
 
             var dbOrder = OrderService.addOrder(cart.ToOrder());
