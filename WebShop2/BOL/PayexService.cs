@@ -40,5 +40,16 @@ namespace WebShop2.BOL
                 return false;
             }
         }
+
+        public bool Initialize8Successfull(InitalizeResponse response)
+        {
+            if (response.ErrorCode != "OK")
+            {
+                return false;
+            } else
+            {
+                return true;
+            }
+        }
     }
 }

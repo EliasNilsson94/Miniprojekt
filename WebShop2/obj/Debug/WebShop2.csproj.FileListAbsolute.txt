@@ -518,3 +518,5 @@ C:\Projects\Miniprojekt\WebShop2\bin\Microsoft.AI.ServerTelemetryChannel.xml
 C:\Projects\Miniprojekt\WebShop2\bin\Microsoft.AI.WindowsServer.xml
 C:\Projects\Miniprojekt\WebShop2\bin\Microsoft.AI.Web.xml
 C:\Projects\Miniprojekt\WebShop2\obj\Debug\WebShop2.csproj.CopyComplete
+C:\Projects\Miniprojekt\WebShop2\bin\log4net.dll
+C:\Projects\Miniprojekt\WebShop2\bin\log4net.xml

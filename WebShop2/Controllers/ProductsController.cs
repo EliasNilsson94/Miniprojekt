@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -17,6 +18,9 @@ namespace WebShop2.Controllers
         public ProductService ProductService { get; set; }
         public UserService UserService { get; set; }
         public CartService CartService { get; set; }
+        private static log4net.ILog Log { get; set; }
+
+        ILog log = log4net.LogManager.GetLogger(typeof(HomeController));
 
         public ProductsController()
         {

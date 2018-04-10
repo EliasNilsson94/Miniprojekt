@@ -23,6 +23,11 @@ namespace WebShop2.Controllers
         }
         public ActionResult Index(int id)
         {
+            if (TempData["Init8Error"] != null)
+            {
+                ViewBag.PayexError = TempData["Init8Error"].ToString();
+            }
+            
             var cart = CartService.GetCartById(id);
             return View(cart);
         }
