@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -17,6 +18,9 @@ namespace WebShop2.Controllers
         public UserService UserService { get; set; }
 
         public PayexService PayexService { get; set; }
+
+        private static log4net.ILog Log { get; set; }
+        ILog log = log4net.LogManager.GetLogger(typeof(HomeController));
 
         public PaymentController()
         { 
@@ -58,7 +62,19 @@ namespace WebShop2.Controllers
             var cart = CartService.GetCartById(id);
 
             var payexRespone = PayexService.initialize8(cart);
-            return Redirect(payexRespone.RedirectURL);
+
+            if (!PayexService.Initialize8Successfull(payexRespone))
+            {
+                log.Debug("Initialize8 Errorcode: " + payexRespone.ErrorCode + " Description: " + payexRespone.Description);
+                //TODO: visa cartsidan med en felmedelande
+
+                TempData["Init8Error"] = "Det gick inte att slutföra köpet";
+                return RedirectToAction("Index", "Cart", new { id = cart.Id });
+            } else
+            {
+                return Redirect(payexRespone.RedirectURL);
+            }
+            
         }
 
         public ActionResult PayexComplete(string orderRef)
@@ -71,12 +87,16 @@ namespace WebShop2.Controllers
                 var dbOrder = OrderService.addOrder(cart.ToOrder());
                 CartService.DeleteCart(cart.Id);
 
+                log.Debug("Transaction successfull - TransactionRef:" + completeResponse.TransactionRef + " TransactionStatus: " + completeResponse.TransactionStatus);
+
                 return RedirectToAction("Order", dbOrder);
                 
             } else
             {
                 var userId = UserService.GetCurrentCustomer().Id;
                 ViewBag.PayexError = "Purchase failed please try again. Description: " + completeResponse.Description;
+
+                log.Debug("Transaction failed - ErrorCode: " + completeResponse.ErrorCode + " Description: " + completeResponse.Description);
 
                 return RedirectToAction("Index", "Cart", new { id = CartService.GetCartByCustomerId(userId).Id });  
 

@@ -22,8 +22,6 @@ namespace WebShop2.DAL
             db.SaveChanges();
         }
 
-
-
         internal Product getProduct(int? id)
         {
             return db.Products.Find(id);

@@ -95,9 +95,13 @@
             <div class="col-md-10">
                 <input type="submit" id="btn-payex" class="btn btn-primary" value="Payex" />
             </div>
-            <div class="col-md-10">
-                <p style="color: red">@ViewBag.PayexError</p>
-            </div>
+            @if (ViewBag.PayexError != null)
+            {
+                <div class=" col-md-10 alert alert-danger" role="alert">
+                    @ViewBag.PayexError
+                </div>
+            }
+
         </div>
     </div>
     }

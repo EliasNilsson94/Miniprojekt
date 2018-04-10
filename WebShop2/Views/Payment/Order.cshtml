@@ -8,12 +8,6 @@
 
 <div>
     <table class="table" style="width: 500px">
-        @*<tr>
-            <th>Poduct</th>
-            <th></th>
-            <th>Quantity</th>
-            <th>Price</th>
-        </tr>*@
         @{
             var cartPrice = 0.0m;
         }
@@ -38,6 +32,7 @@
         </div>
         <div class="col-md-12">
             <h3>Billing information</h3>
+            <p>Transaction reference: @ViewBag.PayexRef</p>
             <p>Name: @Model.Customer.FirstName @Model.Customer.LastName</p>
             <p>Adress: @Model.Customer.Adress.StreetAdress, @Model.Customer.Adress.PostalCode, @Model.Customer.Adress.City</p>
         </div>

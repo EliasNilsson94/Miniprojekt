@@ -23,4 +23,8 @@ textarea {
     max-width: 280px;
 }
 
+.payex-error-message {
+    background-color: red;
+    color: white;
+}
 

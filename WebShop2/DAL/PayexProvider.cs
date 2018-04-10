@@ -15,7 +15,7 @@ namespace WebShop2.DAL
 {
     public class PayexProvider
     {
-        private PxOrderSoapClient payexClient = new PxOrderSoapClient("PxOrderSoap");
+        private PxOrderSoapClient payexClient = new PxOrderSoapClient("PxOrderSoap", ConfigurationManager.AppSettings["PayexEndpoint"]);
         private ParseResult parser = new ParseResult();
 
         public InitalizeResponse Initialize8(Initialize initialize)
@@ -44,11 +44,18 @@ namespace WebShop2.DAL
 
             var initResponse = new InitalizeResponse();
 
-            initResponse.ErrorCode = parser.ParseRes(response, "/payex/status/errorCode");
-            initResponse.Description = parser.ParseRes(response, "/payex/status/description");
-            initResponse.OrderRef = parser.ParseRes(response, "/payex/orderRef");
-            initResponse.RedirectURL = parser.ParseRes(response, "/payex/redirectUrl");
-
+            try
+            {
+                initResponse.ErrorCode = parser.ParseRes(response, "/payex/status/errorCode");
+                initResponse.Description = parser.ParseRes(response, "/payex/status/description");
+                initResponse.OrderRef = parser.ParseRes(response, "/payex/orderRef");
+                initResponse.RedirectURL = parser.ParseRes(response, "/payex/redirectUrl");
+            } catch
+            {
+                initResponse.ErrorCode = parser.ParseRes(response, "/payex/status/errorCode");
+                initResponse.Description = parser.ParseRes(response, "/payex/status/description");
+            }
+            
             return initResponse;
         }
 
