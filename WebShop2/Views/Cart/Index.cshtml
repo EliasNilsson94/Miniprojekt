@@ -1,0 +1,173 @@
+﻿@model WebShop2.Models.Cart
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Cart</h2>
+@Model.Id
+<p>
+    @Html.ActionLink("Back to products", "Index", "Products")
+</p>
+
+<table class="table order-part-table">
+    <tr>
+        <th>Poduct</th>
+        <th></th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th></th>
+    </tr>
+    @{
+        var cartPrice = 0.0m;
+    }
+    @foreach (var item in Model.OrderParts)
+    {
+        var totalPrice = item.Product.price * item.Quantity;
+        cartPrice += totalPrice;
+    <tr>
+        <td>
+            <img src="~/Content/Images/no-image.jpg" width="100" height="100" />
+        </td>
+        <td>@item.Product.Name</td>
+        <td><input onchange="changeQuantity(this.value)" type="number" value="@item.Quantity" /></td>
+        <td>@totalPrice</td>
+        <td><a href="@Url.Action("DeleteCartItem", new { cartId = Model.Id, itemId = item.Id })"><span class="glyphicon glyphicon-trash" style="color: red"></span></a></td>
+    </tr>
+    }
+</table>
+<div class="row">
+    <div class="col-md-9">
+        <button onclick="location.href='@Url.Action("DeleteCart", new { id = Model.Id })'" id="delete-cart" class="btn btn-danger">Delete cart</button>
+    </div>
+    <div class="col-md-3">
+        <p id="cart-price" style="font-size: 30px;">Total: @cartPrice</p>
+    </div>
+
+</div>
+<div class="row">
+    
+        <h2>Adress and contact</h2>
+    
+     @using (Html.BeginForm("PayexPurchase", "Payment", new { id = Model.Id}))
+    {
+        @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(x => x.Customer.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(x => x.Customer.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(x => x.Customer.FirstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(x => x.Customer.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(x => x.Customer.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(x => x.Customer.LastName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(x => x.Customer.Adress.StreetAdress, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(x => x.Customer.Adress.StreetAdress, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(x => x.Customer.Adress.StreetAdress, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(x => x.Customer.Adress.PostalCode, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(x => x.Customer.Adress.PostalCode, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(x => x.Customer.Adress.PostalCode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(x => x.Customer.Adress.City, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(x => x.Customer.Adress.City, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(x => x.Customer.Adress.City, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
+        <h2>Choose payment method</h2>
+        
+        <div class="form-group">
+            <div class="col-md-10">
+                <input type="submit" id="btn-payex" class="btn btn-primary" value="Payex" />
+            </div>
+            <div class="col-md-10">
+                <p style="color: red">@ViewBag.PayexError</p>
+            </div>
+        </div>
+    </div>
+    }
+
+ </div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+<script>
+    @*function getLocalCart() {
+        if (localStorage.getItem("Cart") != null) {
+            var cart = JSON.parse(localStorage.getItem("Cart"));
+            var orderParts = cart.OrderParts;
+
+            var cartPrice = 0;
+            orderParts.forEach(function (element, i) {
+                var totalPrice = element.Quantity * element.Product.Price;
+                cartPrice = cartPrice + totalPrice;
+
+
+                $(".order-part-table").append('<tr><td><img src="#" width="100" height="100"/></td><td>' + element.Product.Name
+                    + '</td><td><input type="hidden" name="id" value="' + i + '"/><input name="quantity" type="number" value="'
+                    + element.Quantity + '"/></div><button onclick="changeQuantity('+i+')" type="button" class="btn btn-primary btn-quantity">Change</button><form></td><td class="total-price">'
+                    + totalPrice + '</td><td><button onclick="deleteCartItem('+i+')" class="btn btn-danger">Delete</button></td></tr>');
+            });
+
+            $("#cart-price").text("Total: " + cartPrice);
+        }
+    }
+
+
+    $(document).ready(function () {
+        getLocalCart();
+         $("#btn-payex").click(function () {
+             if (localStorage.getItem("Cart") != null) {
+                 
+                 $.ajax({
+                     type: "POST",
+                     url: '@Url.Action("LocalCart", "Payment")',
+                     data: localStorage.getItem("Cart"),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                     success: function (response) {
+                         window.location = response.newurl;
+                    },
+                    failure: function (response) {
+                        alert("Something went wrong");
+                    },
+                    error: function (response) {
+                        console.log(response);
+                    }
+                });
+            }
+        });
+    });
+
+    $("#delete-cart").click(function () {
+        localStorage.removeItem("Cart");
+        window.location.href = '@Url.Action("Index", "Products")';
+    });
+
+    function deleteCartItem(id) {
+        var cart = JSON.parse(localStorage.getItem("Cart"));
+        cart.OrderParts.splice(id, 1);
+        localStorage.setItem("Cart", JSON.stringify(cart));
+        window.location.href = '@Url.Action("Index", "Cart")';
+    }
+
+    function changeQuantity(id, quantity) {
+        alert("Should change the quantity of:" +  id);
+    }*@
+    
+</script>

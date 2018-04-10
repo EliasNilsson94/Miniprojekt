@@ -1,0 +1,52 @@
+﻿@model WebShop2.Models.Order
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Thank you for your purchase!</h2>
+
+<div>
+    <h4>Order</h4>
+</div>
+<table class="table">
+    <tr>
+        <th>Poduct</th>
+        <th>Quantity</th>
+        <th>Price</th>
+    </tr>
+    @{
+        decimal totalOrderPrice = 0;
+    }
+    @foreach (var item in Model.OrderParts)
+    {
+        var totalProudctPrice = item.Quantity * item.Product.price;
+        totalOrderPrice += totalProudctPrice;
+        <tr>
+            <td>@item.Product.Name</td>
+            <td>@item.Quantity</td>
+            <td>@totalProudctPrice</td>
+        </tr>
+    }
+    <tr>
+        <td><h3>Total:</h3></td>
+        <td></td>
+        <td><h3>@totalOrderPrice</h3></td>
+    </tr>
+</table>
+<hr />
+<div class="row">
+    <div class="col-lg-4">
+        <h3>Customer:</h3>
+        <p>@Model.Customer.FirstName</p>
+        <p>@Model.Customer.LastName</p>
+    </div>
+    <div class="col-lg-4">
+        <h3>Adress:</h3>
+        @*<p>@Model.Customer.Adress.StreeAdress</p>
+        <p>@Model.Customer.Adress.PostalCode</p>
+        <p>@Model.Customer.Adress.City</p>*@
+    </div>
+    <div class="col-lg-4"></div>
+</div>
+

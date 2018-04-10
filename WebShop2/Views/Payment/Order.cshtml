@@ -1,0 +1,47 @@
+﻿@model WebShop2.Models.Order
+
+@{
+    ViewBag.Title = "Order";
+}
+
+<h2>Thanks for your purchase!</h2>
+
+<div>
+    <table class="table" style="width: 500px">
+        @*<tr>
+            <th>Poduct</th>
+            <th></th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>*@
+        @{
+            var cartPrice = 0.0m;
+        }
+        @foreach (var item in Model.OrderParts)
+        {
+            var totalPrice = item.Product.price * item.Quantity;
+            cartPrice += totalPrice;
+            <tr>
+                <td>
+                    <img src="~/Content/Images/no-image.jpg" width="100" height="100" />
+                </td>
+                <td>@item.Product.Name</td>
+                <td>@item.Quantity</td>
+                <td>@totalPrice</td>
+            </tr>
+        }
+    </table>
+    <div class="row">
+        
+        <div class="col-md-12">
+            <p id="cart-price" style="font-size: 30px;">Total: @cartPrice kr</p>
+        </div>
+        <div class="col-md-12">
+            <h3>Billing information</h3>
+            <p>Name: @Model.Customer.FirstName @Model.Customer.LastName</p>
+            <p>Adress: @Model.Customer.Adress.StreetAdress, @Model.Customer.Adress.PostalCode, @Model.Customer.Adress.City</p>
+        </div>
+
+    </div>
+</div>
+

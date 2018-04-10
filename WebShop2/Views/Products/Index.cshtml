@@ -1,0 +1,89 @@
+﻿@model IEnumerable<WebShop2.Models.Product>
+
+@{
+    ViewBag.Title = "Products";
+}
+
+<h2>Products</h2>
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+    <div class="row product-row">
+        @foreach (var item in Model)
+        {
+          
+            <div class="col-md-4">
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="~/Content/Images/no-image.jpg" alt="Card image cap" width="250" height="250">
+                    <div class="card-body">
+                        <h class="card-title product-name">@item.Name</h>
+                        <p class="card-text product-price">@item.price</p>
+                        @*@Html.ActionLink("Add to cart", "Index", "Cart", new { id = item.Id }, null)*@
+                        @*<button onClick="location.href='@Url.Action("addProductToCart")'" type="button" class="btn btn-primary add-to-cart product-id" value="@item.Id">Add to cart</button>*@
+                        <button onClick="location.href='@Url.Action("addProductToCart", item)'" type="button" class="btn btn-primary" value="@item.Id">Add to cart</button>
+                        @if (User.IsInRole("Admin"))
+                         {
+                            <p>
+                                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                            </p>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+@Scripts.Render("~/bundles/jquery")
+@{ 
+   
+}
+<script type="text/javascript">
+
+    $(function () {
+        $(".add-to-cart").click(function () {
+            var OrderPart = {
+                "Id": 12345,
+                "Product": {
+                    Id: parseInt($(this).val()),
+                    Name: $(this).parent().children(".product-name").text(),
+                    Price: parseFloat($(this).parent().children(".product-price").text()) 
+                },
+                "Quantity": 1
+            }
+
+            var cart = { 
+                "Id": '123455',
+                "OrderParts": []
+            };
+            
+            if (Modernizr.localstorage) {
+              
+                var localCart = window.localStorage;
+
+                if (localCart.getItem("Cart") === null) {
+
+                    cart.OrderParts.push(OrderPart);
+
+                    var JSONCart = JSON.stringify(cart);
+                    localCart.setItem("Cart", JSONCart);
+                   
+                    
+                } else {
+            
+                    var tempCart = JSON.parse(localStorage.getItem("Cart"));
+                    tempCart.OrderParts.push(OrderPart);
+                    localCart.setItem("Cart", JSON.stringify(tempCart));
+                    
+                }
+
+                 
+                window.location.href = '@Url.Action("Index", "Cart" )';
+            }
+        });
+
+    });
+</script>
